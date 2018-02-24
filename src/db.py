@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from .models import Base
 
 
 class DataBase(object):
@@ -17,9 +18,12 @@ class DataBase(object):
             yield session
         except Exception:
             session.rollback()
+            raise
         finally:
             session.close()
 
+    def create_all(self):
+        Base.metadata.create_all(self.engine)
 
-def create_db(config):
-    return DataBase(config.DATABASE_URL)
+    def drop_all(self):
+        Base.metadata.drop_all(self.engine)

@@ -13,10 +13,10 @@ CocktailIngredient = Table(
 )
 
 
-IngredientBar = Table(
+BarIngredient = Table(
     "ingredient_bar", Base.metadata,
-    Column("ingredient_id", Integer, ForeignKey("ingredient.id")),
-    Column("bar_id", Integer, ForeignKey("bar.id"))
+    Column("bar_id", Integer, ForeignKey("bar.id")),
+    Column("ingredient_id", Integer, ForeignKey("ingredient.id"))
 )
 
 
@@ -26,13 +26,9 @@ class Ingredient(Base):
 
     id = Column(Integer, primary_key=True)
 
-    name = Column(String)
+    name = Column(String, unique=True)
 
     abv = Column(Integer)
-
-    taste = Column(String, nullable=True)
-
-    price = Column(Integer, nullable=True)
 
     cocktails = relationship(
         "Cocktail",
@@ -42,7 +38,7 @@ class Ingredient(Base):
 
     bars = relationship(
         "Bar",
-        secondary=IngredientBar,
+        secondary=BarIngredient,
         back_populates="ingredients"
     )
 
@@ -53,7 +49,7 @@ class Glass(Base):
 
     id = Column(Integer, primary_key=True)
 
-    name = Column(String)
+    name = Column(String, unique=True)
 
     cocktails = relationship("Cocktail", back_populates="glass")
 
@@ -64,7 +60,7 @@ class Cocktail(Base):
 
     id = Column(Integer, primary_key=True)
 
-    name = Column(String)
+    name = Column(String, unique=True)
 
     glass_id = Column(Integer, ForeignKey("glass.id"))
     glass = relationship("Glass", back_populates="cocktails")
@@ -75,12 +71,6 @@ class Cocktail(Base):
         back_populates="cocktails"
     )
 
-    recipe = Column(String, nullable=True)
-
-    category = Column(String, nullable=True)
-
-    garnish = Column(String, nullable=True)
-
 
 class Bar(Base):
 
@@ -90,6 +80,6 @@ class Bar(Base):
 
     ingredients = relationship(
         "Ingredient",
-        secondary=IngredientBar,
+        secondary=BarIngredient,
         back_populates="bars"
     )
