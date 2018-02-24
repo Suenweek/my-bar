@@ -17,23 +17,24 @@ def db():
     """Bar database management."""
 
 
-@db.command("create-all")
+@db.command()
 @pass_app
-def create_all(app):
-    """Create all tables."""
+def init(app):
+    """Create all tables and bar instance."""
     app.db.create_all()
+    app.create_bar()
 
 
-@db.command("drop-all")
+@db.command()
 @pass_app
-def drop_all(app):
+def drop(app):
     """Drop all tables."""
     app.db.drop_all()
 
 
-@db.command("load-iba")
+@db.command()
 @pass_app
-def load_iba(app):
+def iba(app):
     """Load ingredients and cocktails from IBA list."""
     app.load_iba_ingredients()
     app.load_iba_cocktails()

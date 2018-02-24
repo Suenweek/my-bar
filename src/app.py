@@ -1,6 +1,6 @@
 from .db import DataBase, get_or_create
 from .resources import Resources
-from .models import Ingredient, Glass, Cocktail
+from .models import Bar, Ingredient, Glass, Cocktail
 
 
 class App(object):
@@ -9,6 +9,12 @@ class App(object):
         self.config = config
         self.db = DataBase(config.DATABASE_URL)
         self.resources = Resources(config.RESOURCES_DIR)
+
+    def create_bar(self):
+        with self.db.session as session:
+            bar = get_or_create(session, Bar, id=1)
+            session.add(bar)
+            session.commit()
 
     def load_iba_ingredients(self):
         with self.db.session as session:
