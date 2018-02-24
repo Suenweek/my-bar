@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
 from .models import Base
 
 
@@ -27,3 +28,10 @@ class DataBase(object):
 
     def drop_all(self):
         Base.metadata.drop_all(self.engine)
+
+
+def get_or_create(session, model, **kwargs):
+    try:
+        return session.query(model).filter_by(**kwargs).one()
+    except NoResultFound:
+        return model(**kwargs)
