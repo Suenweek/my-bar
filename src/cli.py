@@ -30,8 +30,8 @@ def add_ingredient(app, ingredient):
 @pass_app
 def list_ingredients(app):
     """List ingredients in bar."""
-    for i in app.list_ingredients():
-        click.echo(i)
+    for ingredient in app.list_ingredients():
+        click.echo(ingredient)
 
 
 @main.command("rm")
