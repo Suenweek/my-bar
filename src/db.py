@@ -1,3 +1,4 @@
+from functools import wraps
 from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -35,3 +36,11 @@ def get_or_create(session, model, **kwargs):
         return session.query(model).filter_by(**kwargs).one()
     except NoResultFound:
         return model(**kwargs)
+
+
+def with_session(f):
+    @wraps(f)
+    def wrapper(instance, *args, **kwargs):
+        with instance.db.session as session:
+            return f(instance, session, *args, **kwargs)
+    return wrapper

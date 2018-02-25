@@ -40,16 +40,8 @@ class Ingredient(Base):
         back_populates="ingredients"
     )
 
-
-class Glass(Base):
-
-    __tablename__ = "glass"
-
-    id = Column(Integer, primary_key=True)
-
-    name = Column(String, unique=True)
-
-    cocktails = relationship("Cocktail", back_populates="glass")
+    def __repr__(self):
+        return "<Ingredient(name='{}')>".format(self.name)
 
 
 class Cocktail(Base):
@@ -60,14 +52,14 @@ class Cocktail(Base):
 
     name = Column(String, unique=True)
 
-    glass_id = Column(Integer, ForeignKey("glass.id"))
-    glass = relationship("Glass", back_populates="cocktails")
-
     ingredients = relationship(
         "Ingredient",
         secondary=CocktailIngredient,
         back_populates="cocktails"
     )
+
+    def __repr__(self):
+        return "<Cocktail(name='{}')>".format(self.name)
 
 
 class Bar(Base):
@@ -81,3 +73,6 @@ class Bar(Base):
         secondary=BarIngredient,
         back_populates="bars"
     )
+
+    def __repr__(self):
+        return "<Bar(id={})>".format(self.id)
