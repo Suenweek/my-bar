@@ -28,8 +28,6 @@ class Ingredient(Base):
 
     name = Column(String, unique=True)
 
-    abv = Column(Integer)
-
     cocktails = relationship(
         "Cocktail",
         secondary=CocktailIngredient,

@@ -21,10 +21,9 @@ class App(object):
             ingredients = [
                 get_or_create(
                     session, Ingredient,
-                    name=name,
-                    abv=info["abv"]
+                    name=name
                 )
-                for name, info in self.resources["ingredients"].items()
+                for name in self.resources["ingredients"]
             ]
             session.add_all(ingredients)
             session.commit()
