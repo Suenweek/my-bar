@@ -14,7 +14,7 @@ CocktailIngredient = Table(
 
 
 BarIngredient = Table(
-    "ingredient_bar", Base.metadata,
+    "bar_ingredient", Base.metadata,
     Column("bar_id", Integer, ForeignKey("bar.id")),
     Column("ingredient_id", Integer, ForeignKey("ingredient.id"))
 )
@@ -31,13 +31,15 @@ class Ingredient(Base):
     cocktails = relationship(
         "Cocktail",
         secondary=CocktailIngredient,
-        back_populates="ingredients"
+        back_populates="ingredients",
+        collection_class=set
     )
 
     bars = relationship(
         "Bar",
         secondary=BarIngredient,
-        back_populates="ingredients"
+        back_populates="ingredients",
+        collection_class=set
     )
 
     def __repr__(self):
@@ -55,7 +57,8 @@ class Cocktail(Base):
     ingredients = relationship(
         "Ingredient",
         secondary=CocktailIngredient,
-        back_populates="cocktails"
+        back_populates="cocktails",
+        collection_class=set
     )
 
     def __repr__(self):
@@ -71,7 +74,8 @@ class Bar(Base):
     ingredients = relationship(
         "Ingredient",
         secondary=BarIngredient,
-        back_populates="bars"
+        back_populates="bars",
+        collection_class=set
     )
 
     def __repr__(self):

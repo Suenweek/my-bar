@@ -64,7 +64,7 @@ class App(object):
             raise errors.DoesNotExistError
 
         if ingredient not in bar.ingredients:
-            bar.ingredients.append(ingredient)
+            bar.ingredients.add(ingredient)
         else:
             raise errors.AlreadyInBarError
 
@@ -90,3 +90,18 @@ class App(object):
             raise errors.NotInBarError
 
         session.commit()
+
+    # TODO: Rewrite using SQL query
+    @with_session
+    def list_available_cocktails(self, session):
+        bar = session.query(Bar).get(BAR_ID)
+        return [
+            cocktail for cocktail
+            in session.query(Cocktail).all()
+            if cocktail.ingredients.issubset(bar.ingredients)
+        ]
+
+    # TODO: Implement using SQL query
+    @with_session
+    def list_most_wanted_ingredients(self, session, limit=3):
+        raise NotImplementedError

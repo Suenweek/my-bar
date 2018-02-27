@@ -7,10 +7,18 @@ from .app import App
 pass_app = click.make_pass_decorator(App)
 
 
-@click.group()
+# TODO: Add filtering
+@click.group(invoke_without_command=True)
 @click.pass_context
 def main(ctx):
-    ctx.obj = App(config=config)
+    """
+    Helps to manage your bar.
+    """
+    app = App(config=config)
+    ctx.obj = app
+
+    for cocktail in app.list_available_cocktails():
+        click.echo(cocktail)
 
 
 @main.command("add")
@@ -26,7 +34,7 @@ def add_ingredient(app, ingredient):
         click.echo("Ingredient '{}' is already in bar.".format(ingredient))
 
 
-@main.command("list")
+@main.command("ls")
 @pass_app
 def list_ingredients(app):
     """List ingredients in bar."""
