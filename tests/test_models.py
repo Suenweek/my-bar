@@ -18,7 +18,7 @@ def test_create_cocktail(db):
         orange_juice = Ingredient(name="Orange juice")
         screwdriver = Cocktail(
             name="Screwdriver",
-            ingredients=[vodka, orange_juice]
+            ingredients={vodka, orange_juice}
         )
         session.add(screwdriver)
         session.commit()

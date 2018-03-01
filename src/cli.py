@@ -7,8 +7,7 @@ from .app import App
 pass_app = click.make_pass_decorator(App)
 
 
-# TODO: Add filtering
-@click.group(invoke_without_command=True)
+@click.group()
 @click.pass_context
 def main(ctx):
     """
@@ -16,9 +15,6 @@ def main(ctx):
     """
     app = App(config=config)
     ctx.obj = app
-
-    for cocktail in app.list_available_cocktails():
-        click.echo(cocktail)
 
 
 @main.command("add")
@@ -36,17 +32,30 @@ def add_ingredient(app, ingredient):
 
 @main.command("ls")
 @pass_app
-def list_ingredients(app):
-    """List ingredients in bar."""
-    for ingredient in app.list_ingredients():
-        click.echo(ingredient)
+@click.option(
+    "-f", "--filter",
+    type=click.Choice(["ingredients", "cocktails"]),
+    default=["ingredients", "cocktails"],
+    multiple=True
+)
+def list_ingredients(app, filter):
+    """List bar ingredients and available cocktails."""
+    for item in filter:
+        if item == "ingredients":
+            for ingredient in app.list_ingredients():
+                click.echo(ingredient)
+        elif item == "cocktails":
+            for cocktail in app.list_available_cocktails():
+                click.echo(cocktail)
+        else:
+            raise RuntimeError("Unreachable.")
 
 
 @main.command("rm")
 @pass_app
 @click.argument("ingredient")
 def remove_ingredient(app, ingredient):
-    """Remove ingredient from bar."""
+    """Remove bar ingredient."""
     try:
         app.remove_ingredient(name=ingredient)
     except errors.DoesNotExistError:
@@ -76,6 +85,6 @@ def init(app, iba):
 @pass_app
 @click.pass_context
 def reset(ctx, app):
-    """Drop all tables and init again."""
+    """Drop all tables and re-init."""
     app.db.drop_all()
     ctx.invoke(init)
