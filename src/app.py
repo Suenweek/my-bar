@@ -1,8 +1,7 @@
 from . import errors
 from .db import DataBase, get_or_create, with_session
-from .resources import Resources
 from .models import Bar, Ingredient, Cocktail
-from .helpers import get_config
+from .helpers import get_config, Resources
 
 
 class App(object):
