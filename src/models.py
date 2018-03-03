@@ -71,6 +71,8 @@ class Bar(Base):
 
     id = Column(Integer, primary_key=True)
 
+    name = Column(String, unique=True)
+
     ingredients = relationship(
         "Ingredient",
         secondary=BarIngredient,
@@ -79,4 +81,4 @@ class Bar(Base):
     )
 
     def __repr__(self):
-        return "<Bar(id={})>".format(self.id)
+        return "<Bar(id={}, name={})>".format(self.id, self.name)

@@ -1,4 +1,4 @@
-from src.models import Ingredient, Cocktail
+from src.models import Ingredient, Cocktail, Bar
 
 
 def test_create_ingredient(db):
@@ -40,3 +40,14 @@ def test_create_cocktail(db):
 
         assert cocktail in vodka.cocktails
         assert cocktail in orange_juice.cocktails
+
+
+def test_create_bar(db):
+    with db.session as session:
+        bar = Bar(name="Home-bar")
+        session.add(bar)
+        session.commit()
+
+    with db.session as session:
+        bar = session.query(Bar).one()
+        assert bar.name == "Home-bar"

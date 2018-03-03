@@ -2,22 +2,19 @@ from . import errors
 from .db import DataBase, get_or_create, with_session
 from .resources import Resources
 from .models import Bar, Ingredient, Cocktail
-
-
-# TODO: Make possible to work on multiple bars
-BAR_ID = 1
+from .helpers import get_config
 
 
 class App(object):
 
-    def __init__(self, config):
-        self.config = config
-        self.db = DataBase(config.DATABASE_URL)
-        self.resources = Resources(config.RESOURCES_DIR)
+    def __init__(self, env):
+        self.config = get_config(env)
+        self.db = DataBase(self.config.DATABASE_URL)
+        self.resources = Resources(self.config.RESOURCES_DIR)
 
     @with_session
-    def create_bar(self, session):
-        bar = get_or_create(session, Bar, id=BAR_ID)
+    def create_bar(self, session, id):
+        bar = get_or_create(session, Bar, id=id)
         session.add(bar)
         session.commit()
 
@@ -37,14 +34,14 @@ class App(object):
     def load_iba_cocktails(self, session):
         for recipe in self.resources["recipes"]:
             name = recipe["name"]
-            ingredients = [
+            ingredients = {
                 get_or_create(
                     session, Ingredient,
                     name=ingr["ingredient"]
                 )
                 for ingr in recipe["ingredients"]
                 if ingr.get("ingredient") is not None
-            ]
+            }
             cocktail = get_or_create(
                 session, Cocktail,
                 name=name
@@ -54,10 +51,10 @@ class App(object):
         session.commit()
 
     @with_session
-    def add_ingredient(self, session, name):
-        bar = session.query(Bar).get(BAR_ID)
+    def add_ingredient(self, session, bar_id, ingredient_name):
+        bar = session.query(Bar).get(bar_id)
         ingredient = session.query(Ingredient)\
-                            .filter(Ingredient.name == name)\
+                            .filter(Ingredient.name == ingredient_name)\
                             .one_or_none()
 
         if ingredient is None:
@@ -71,14 +68,14 @@ class App(object):
         session.commit()
 
     @with_session
-    def list_ingredients(self, session):
-        return session.query(Bar).get(BAR_ID).ingredients
+    def list_ingredients(self, session, bar_id):
+        return session.query(Bar).get(bar_id).ingredients
 
     @with_session
-    def remove_ingredient(self, session, name):
-        bar = session.query(Bar).get(BAR_ID)
+    def remove_ingredient(self, session, bar_id, ingredient_name):
+        bar = session.query(Bar).get(bar_id)
         ingredient = session.query(Ingredient)\
-                            .filter(Ingredient.name == name)\
+                            .filter(Ingredient.name == ingredient_name)\
                             .one_or_none()
 
         if ingredient is None:
@@ -91,17 +88,15 @@ class App(object):
 
         session.commit()
 
-    # TODO: Rewrite using SQL query
     @with_session
-    def list_available_cocktails(self, session):
-        bar = session.query(Bar).get(BAR_ID)
+    def list_available_cocktails(self, session, bar_id):
+        bar = session.query(Bar).get(bar_id)
         return [
             cocktail for cocktail
             in session.query(Cocktail).all()
             if cocktail.ingredients.issubset(bar.ingredients)
         ]
 
-    # TODO: Implement using SQL query
     @with_session
-    def list_most_wanted_ingredients(self, session, limit=3):
+    def list_most_wanted_ingredients(self, session, bar_id):
         raise NotImplementedError
