@@ -1,19 +1,20 @@
+from src.db import session_scope
 from src.models import Ingredient, Cocktail, Bar
 
 
 def test_create_ingredient(db):
-    with db.session as session:
+    with session_scope() as session:
         dark_rum = Ingredient(name="Dark rum")
         session.add(dark_rum)
         session.commit()
 
-    with db.session as session:
+    with session_scope() as session:
         ingredient = session.query(Ingredient).one()
         assert ingredient.name == "Dark rum"
 
 
 def test_create_cocktail(db):
-    with db.session as session:
+    with session_scope() as session:
         vodka = Ingredient(name="Vodka")
         orange_juice = Ingredient(name="Orange juice")
         screwdriver = Cocktail(
@@ -23,7 +24,7 @@ def test_create_cocktail(db):
         session.add(screwdriver)
         session.commit()
 
-    with db.session as session:
+    with session_scope() as session:
         ingredients = session.query(Ingredient)\
                              .order_by(Ingredient.name.desc())\
                              .all()
@@ -43,11 +44,11 @@ def test_create_cocktail(db):
 
 
 def test_create_bar(db):
-    with db.session as session:
+    with session_scope() as session:
         bar = Bar(name="Home-bar")
         session.add(bar)
         session.commit()
 
-    with db.session as session:
+    with session_scope() as session:
         bar = session.query(Bar).one()
         assert bar.name == "Home-bar"

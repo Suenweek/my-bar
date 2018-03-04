@@ -1,9 +1,6 @@
 from sqlalchemy import Table, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-
-
-Base = declarative_base()
+from .db import Base
 
 
 CocktailIngredient = Table(
@@ -43,7 +40,7 @@ class Ingredient(Base):
     )
 
     def __repr__(self):
-        return "<Ingredient(name='{}')>".format(self.name)
+        return u"<Ingredient(name='{}')>".format(self.name)
 
 
 class Cocktail(Base):
@@ -82,3 +79,6 @@ class Bar(Base):
 
     def __repr__(self):
         return "<Bar(id={}, name={})>".format(self.id, self.name)
+
+    def can_make(self, cocktail):
+        return cocktail.ingredients.issubset(self.ingredients)

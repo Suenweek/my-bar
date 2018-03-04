@@ -7,9 +7,8 @@ import click
 class Context(object):
 
     env = attr.ib()
-    verbose = attr.ib()
     app = attr.ib()
-    bar_id = attr.ib()
+    bar_name = attr.ib()
 
     def log(self, msg, *args):
         """Log msg to stderr."""

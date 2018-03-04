@@ -14,98 +14,91 @@ from .context import pass_context
     help="Environment to use."
 )
 @click.option(
-    "-v", "--verbose",
-    is_flag=True,
-    help="Enable verbose mode."
-)
-@click.option(
-    "--bar-id",
-    type=click.INT,
-    default=1,
+    "--name",
+    default="my-bar",
     show_default=True,
-    help="Id of a bar to operate on."
+    help="Name of a bar to operate on."
 )
 @pass_context
-def main(ctx, env, verbose, bar_id):
+def main(ctx, env, name):
     """
     Helps to manage your bar.
     """
     ctx.env = env
-    ctx.verbose = verbose
+    ctx.bar_name = name
+
     ctx.app = App(env)
-    ctx.bar_id = bar_id
+    ctx.app.db.create_all()
+    ctx.app.ensure_bar_exists(name=ctx.bar_name)
 
 
 @main.command("add")
 @pass_context
-@click.argument("ingredient-name")
-def add_ingredient(ctx, ingredient_name):
-    """Add new ingredient to bar."""
-    try:
-        ctx.app.add_ingredient(ctx.bar_id, ingredient_name)
-    except errors.DoesNotExistError:
-        ctx.log("Ingredient '{}' does not exist in db.", ingredient_name)
-    except errors.AlreadyInBarError:
-        ctx.log("Ingredient '{}' is already in bar.", ingredient_name)
+@click.argument("ingredient-names", nargs=-1)
+def bar_add_ingredient(ctx, ingredient_names):
+    """Add ingredient."""
+    for ingredient_name in ingredient_names:
+        try:
+            ctx.app.add_bar_ingredient(ctx.bar_name, ingredient_name)
+        except errors.DoesNotExistError:
+            ctx.log("Ingredient '{}' does not exist in db.", ingredient_name)
+        except errors.AlreadyInBarError:
+            ctx.log("Ingredient '{}' is already in bar.", ingredient_name)
 
 
 @main.command("ls")
 @pass_context
-@click.option(
-    "-f", "--filter",
-    type=click.Choice(["ingredients", "cocktails"]),
-    default=["ingredients", "cocktails"],
-    multiple=True
-)
-def list_ingredients(ctx, filter):
-    """List bar ingredients and available cocktails."""
-    for item in filter:
-        if item == "ingredients":
-            for ingredient in ctx.app.list_ingredients(ctx.bar_id):
-                ctx.log(ingredient)
-        elif item == "cocktails":
-            for cocktail in ctx.app.list_available_cocktails(ctx.bar_id):
-                ctx.log(cocktail)
-        else:
-            raise RuntimeError("Unreachable.")
+def list_bar(ctx):
+    """List ingredients and available cocktails."""
+    bar_ingredients = ctx.app.list_bar_ingredients(ctx.bar_name)
+    if bar_ingredients:
+        click.echo("Bar ingredients:")
+    for ingredient in bar_ingredients:
+        click.secho(ingredient.name, fg="green")
+
+    available_cocktails = ctx.app.list_available_cocktails(ctx.bar_name)
+    if available_cocktails:
+        click.echo("Available cocktails:")
+    for cocktail in available_cocktails:
+        click.secho(cocktail.name, fg="green")
+
+    most_wanted = ctx.app.list_most_wanted_ingredients(ctx.bar_name)
+    if most_wanted:
+        click.echo("Most wanted ingredients:")
+    for ingredient in most_wanted:
+        click.secho(ingredient.name, fg="red")
 
 
 @main.command("rm")
 @pass_context
-@click.argument("ingredient-name")
-def remove_ingredient(ctx, ingredient_name):
-    """Remove bar ingredient."""
-    try:
-        ctx.app.remove_ingredient(ctx.bar_id, ingredient_name)
-    except errors.DoesNotExistError:
-        ctx.log("Ingredient '{}' does not exist in db.", ingredient_name)
-    except errors.NotInBarError:
-        ctx.log("Ingredient '{}' is not in bar.", ingredient_name)
+@click.argument("ingredient-names", nargs=-1)
+def bar_rm_ingredient(ctx, ingredient_names):
+    """Remove ingredient."""
+    for ingredient_name in ingredient_names:
+        try:
+            ctx.app.remove_bar_ingredient(ctx.bar_name, ingredient_name)
+        except errors.DoesNotExistError:
+            ctx.log("Ingredient '{}' does not exist in db.", ingredient_name)
+        except errors.NotInBarError:
+            ctx.log("Ingredient '{}' is not in bar.", ingredient_name)
 
 
 @main.group()
 def db():
-    """Bar database management."""
+    """Database management."""
 
 
-@db.command()
+@db.command("iba")
 @pass_context
-def init(ctx):
-    """Create all tables, bar instance."""
-    ctx.app.db.create_all()
-    ctx.app.create_bar(id=ctx.bar_id)
-
-
-@db.command()
-@pass_context
-def iba(ctx):
+def db_load_iba(ctx):
     """Load IBA cocktails and ingredients."""
     ctx.app.load_iba_ingredients()
     ctx.app.load_iba_cocktails()
 
 
-@db.command()
+@db.command("reset")
 @pass_context
-def drop(ctx):
+def db_reset(ctx):
     """Drop all tables."""
     ctx.app.db.drop_all()
+    ctx.app.db.create_all()
