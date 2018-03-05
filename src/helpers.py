@@ -3,9 +3,8 @@ import json
 import importlib
 
 
-def get_config(env):
-    mod_name = "src.config.{}".format(env)
-    return importlib.import_module(mod_name)
+def get_config():
+    return importlib.import_module("src.config")
 
 
 class Resources(object):

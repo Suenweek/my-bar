@@ -1,13 +1,13 @@
 from . import errors
 from .db import DataBase, with_session
 from .models import Bar, Ingredient, Cocktail
-from .helpers import get_config, Resources
+from .helpers import Resources
 
 
 class App(object):
 
-    def __init__(self, env):
-        self.config = get_config(env)
+    def __init__(self, config):
+        self.config = config
         self.db = DataBase(self.config.DATABASE_URL)
         self.resources = Resources(self.config.RESOURCES_DIR)
 
@@ -88,7 +88,7 @@ class App(object):
         ]
 
     @with_session
-    def list_most_wanted_ingredients(self, bar_name, limit=5, session=None):
+    def list_most_wanted_ingredients(self, bar_name, limit=None, session=None):
         bar = Bar.get_one_or_create(session, name=bar_name)
         all_ingredients = session.query(Ingredient)
         missing_ingredients = set(all_ingredients) - bar.ingredients

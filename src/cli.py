@@ -2,17 +2,12 @@ import click
 from . import errors
 from .app import App
 from .context import pass_context
+from .helpers import get_config
 
 
 @click.group(context_settings={
     "auto_envvar_prefix": "MY_BAR"
 })
-@click.option(
-    "-e", "--env",
-    type=click.Choice(["test", "prod"]),
-    default="prod",
-    help="Environment to use."
-)
 @click.option(
     "--name",
     default="my-bar",
@@ -20,14 +15,13 @@ from .context import pass_context
     help="Name of a bar to operate on."
 )
 @pass_context
-def main(ctx, env, name):
+def main(ctx, name):
     """
     Helps to manage your bar.
     """
-    ctx.env = env
     ctx.bar_name = name
 
-    ctx.app = App(env)
+    ctx.app = App(config=get_config())
     ctx.app.db.create_all()
     ctx.app.ensure_bar_exists(name=ctx.bar_name)
 
@@ -62,7 +56,10 @@ def list_bar(ctx):
     for cocktail in available_cocktails:
         click.secho(cocktail.name, fg="green")
 
-    most_wanted = ctx.app.list_most_wanted_ingredients(ctx.bar_name)
+    most_wanted = ctx.app.list_most_wanted_ingredients(
+        ctx.bar_name,
+        limit=5  # FIXME: Add CLI option instead of hard-coded value
+    )
     if most_wanted:
         click.echo("Most wanted ingredients:")
     for ingredient in most_wanted:
