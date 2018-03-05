@@ -1,3 +1,4 @@
+import os
 from . import errors
 from .db import DataBase, with_session
 from .models import Bar, Ingredient, Cocktail
@@ -10,6 +11,16 @@ class App(object):
         self.config = config
         self.db = DataBase(self.config.DATABASE_URL)
         self.resources = Resources(self.config.RESOURCES_DIR)
+
+    def init_db(self):
+        self.db.create_all()
+
+    def drop_db(self):
+        self.db.drop_all()
+
+    def ensure_user_data_dir_exists(self):
+        if not os.path.exists(self.config.USER_DATA_DIR):
+            os.makedirs(self.config.USER_DATA_DIR)
 
     @with_session
     def ensure_bar_exists(self, name, session):

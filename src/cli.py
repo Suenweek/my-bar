@@ -22,7 +22,8 @@ def main(ctx, name):
     ctx.bar_name = name
 
     ctx.app = App(config=get_config())
-    ctx.app.db.create_all()
+    ctx.app.ensure_user_data_dir_exists()
+    ctx.app.init_db()
     ctx.app.ensure_bar_exists(name=ctx.bar_name)
 
 
@@ -97,5 +98,5 @@ def db_load_iba(ctx):
 @pass_context
 def db_reset(ctx):
     """Drop all tables."""
-    ctx.app.db.drop_all()
-    ctx.app.db.create_all()
+    ctx.app.drop_db()
+    ctx.app.init_db()

@@ -1,5 +1,6 @@
 import os
 import pytest
+from tempfile import gettempdir
 from click.testing import CliRunner
 from src.db import DataBase
 from src.app import App
@@ -10,7 +11,7 @@ from src.helpers import get_config
 def config():
     config = get_config()
     config.DATABASE_URL = "sqlite:///{}".format(
-        os.path.join(config.TMP_DIR, config.DATABASE_NAME)
+        os.path.join(gettempdir(), config.DATABASE_NAME)
     )
     yield config
 

@@ -213,6 +213,3 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-
-# Database
-resources/*.db
