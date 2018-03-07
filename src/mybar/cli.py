@@ -1,8 +1,8 @@
 import click
-from mybar import errors
-from mybar.app import App
-from mybar.context import pass_context
-from mybar.helpers import get_config
+from . import errors
+from .app import App
+from .context import pass_context
+from .helpers import get_config
 
 
 @click.group(context_settings={

@@ -1,6 +1,6 @@
 from sqlalchemy import Table, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from mybar.db import Base
+from .db import Base
 
 
 CocktailIngredient = Table(
