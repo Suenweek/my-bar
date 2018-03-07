@@ -2,9 +2,9 @@ import os
 import pytest
 from tempfile import gettempdir
 from click.testing import CliRunner
-from src.db import DataBase
-from src.app import App
-from src.helpers import get_config
+from mybar.db import DataBase
+from mybar.app import App
+from mybar.helpers import get_config
 
 
 @pytest.fixture()

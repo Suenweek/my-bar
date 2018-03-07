@@ -1,8 +1,8 @@
 import os
-from . import errors
-from .db import DataBase, with_session
-from .models import Bar, Ingredient, Cocktail
-from .helpers import Resources
+from mybar import errors
+from mybar.db import DataBase, with_session
+from mybar.models import Bar, Ingredient, Cocktail
+from mybar.helpers import Resources
 
 
 class App(object):
