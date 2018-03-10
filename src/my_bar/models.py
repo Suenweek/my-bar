@@ -40,7 +40,7 @@ class Ingredient(Base):
     )
 
     def __repr__(self):
-        return u"<Ingredient(name='{}')>".format(self.name)
+        return "<Ingredient(name='{}')>".format(self.name)
 
 
 class Cocktail(Base):
@@ -78,7 +78,7 @@ class Bar(Base):
     )
 
     def __repr__(self):
-        return "<Bar(id={}, name={})>".format(self.id, self.name)
+        return "<Bar(id={}, name='{}')>".format(self.id, self.name)
 
     def can_make(self, cocktail):
         return cocktail.ingredients.issubset(self.ingredients)
