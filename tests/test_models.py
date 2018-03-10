@@ -1,5 +1,5 @@
-from mybar.db import session_scope
-from mybar.models import Ingredient, Cocktail, Bar
+from my_bar.db import session_scope
+from my_bar.models import Ingredient, Cocktail, Bar
 
 
 def test_create_ingredient(db):

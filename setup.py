@@ -12,7 +12,7 @@ setup(
     description="CLI app to manage your bar.",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    package_data={"mybar": ["resources/*.json"]},
+    package_data={"my_bar": ["resources/*.json"]},
     url="https://github.com/Suenweek/my-bar",
     author="Suenweek",
     install_requires=[
@@ -27,7 +27,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "my-bar = mybar.cli:main"
+            "my-bar = my_bar.cli:main"
         ]
     }
 )

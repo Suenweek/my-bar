@@ -1,4 +1,4 @@
-from mybar import cli
+from my_bar import cli
 
 
 def test_main(cli_runner):
