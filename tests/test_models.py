@@ -1,23 +1,22 @@
-from my_bar.db import session_scope
 from my_bar.models import Ingredient, Cocktail, Bar
 
 
 def test_create_ingredient(db):
-    with session_scope() as session:
+    with db.session_scope() as session:
         # Create ingredient
         dark_rum = Ingredient(name="Dark rum")
         session.add(dark_rum)
 
         session.commit()
 
-    with session_scope() as session:
+    with db.session_scope() as session:
         # Check if ingredient was created
         ingredient = session.query(Ingredient).one()
         assert ingredient.name == "Dark rum"
 
 
 def test_create_cocktail(db):
-    with session_scope() as session:
+    with db.session_scope() as session:
         # Create Screwdriver ingredients
         vodka = Ingredient(name="Vodka")
         orange_juice = Ingredient(name="Orange juice")
@@ -31,7 +30,7 @@ def test_create_cocktail(db):
 
         session.commit()
 
-    with session_scope() as session:
+    with db.session_scope() as session:
         ingredients = session.query(Ingredient)\
                              .order_by(Ingredient.name.desc())\
                              .all()
@@ -54,21 +53,21 @@ def test_create_cocktail(db):
 
 
 def test_create_bar(db):
-    with session_scope() as session:
+    with db.session_scope() as session:
         # Create bar
         bar = Bar(name="my-bar")
         session.add(bar)
 
         session.commit()
 
-    with session_scope() as session:
+    with db.session_scope() as session:
         # Check if it can be found
         bar = session.query(Bar).one()
         assert bar.name == "my-bar"
 
 
 def test_bar_can_make_cocktail(db):
-    with session_scope() as session:
+    with db.session_scope() as session:
         # Create bar
         bar = Bar(name="my-bar")
         session.add(bar)
@@ -94,7 +93,7 @@ def test_bar_can_make_cocktail(db):
 
         session.commit()
 
-    with session_scope() as session:
+    with db.session_scope() as session:
         bar = session.query(Bar).one()
         screwdriver = session.query(Cocktail)\
                              .filter_by(name="Screwdriver")\
