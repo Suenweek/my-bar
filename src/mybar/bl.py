@@ -66,11 +66,9 @@ class Bartender(BlBase):
     def list_cocktails(self, bar_name):
         with self.app.db.session_scope() as session:
             bar = Bar.get_one_or_create(session, name=bar_name)
-            return [
-                cocktail for cocktail
-                in session.query(Cocktail).all()
-                if bar.can_make(cocktail)
-            ]
+            return [cocktail for cocktail
+                    in session.query(Cocktail).all()
+                    if bar.can_make(cocktail)]
 
 
 class CookBook(BlBase):

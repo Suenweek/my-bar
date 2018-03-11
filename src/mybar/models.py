@@ -78,7 +78,7 @@ class Bar(Base):
     )
 
     def __repr__(self):
-        return "<Bar(id={}, name='{}')>".format(self.id, self.name)
+        return "<Bar(name='{}')>".format(self.name)
 
     def can_make(self, cocktail):
         return cocktail.ingredients.issubset(self.ingredients)

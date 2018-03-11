@@ -6,7 +6,7 @@ from .helpers import get_config
 
 
 @click.group(context_settings={
-    "auto_envvar_prefix": "MY_BAR"
+    "auto_envvar_prefix": "MYBAR"
 })
 @click.option(
     "--name",
