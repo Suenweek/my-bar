@@ -55,7 +55,7 @@ def test_create_cocktail(db):
 def test_create_bar(db):
     with db.session_scope() as session:
         # Create bar
-        bar = Bar(name="my-bar")
+        bar = Bar(name="mybar")
         session.add(bar)
 
         session.commit()
@@ -63,13 +63,13 @@ def test_create_bar(db):
     with db.session_scope() as session:
         # Check if it can be found
         bar = session.query(Bar).one()
-        assert bar.name == "my-bar"
+        assert bar.name == "mybar"
 
 
 def test_bar_can_make_cocktail(db):
     with db.session_scope() as session:
         # Create bar
-        bar = Bar(name="my-bar")
+        bar = Bar(name="mybar")
         session.add(bar)
 
         # Create all ingredients
