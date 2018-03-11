@@ -7,13 +7,13 @@ tests_deps = [
 ]
 
 setup(
-    name="my-bar",
+    name="mybar",
     version="0.0.1",
     description="CLI app to manage your bar.",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    package_data={"my_bar": ["resources/*.json"]},
-    url="https://github.com/Suenweek/my-bar",
+    package_data={"mybar": ["resources/*.json"]},
+    url="https://github.com/Suenweek/mybar",
     author="Suenweek",
     install_requires=[
         "click",
@@ -27,7 +27,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "my-bar = my_bar.cli:main"
+            "mybar = mybar.cli:main"
         ]
     }
 )

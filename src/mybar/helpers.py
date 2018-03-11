@@ -4,7 +4,7 @@ import importlib
 
 
 def get_config():
-    return importlib.import_module("my_bar.config")
+    return importlib.import_module("mybar.config")
 
 
 class Resources(object):

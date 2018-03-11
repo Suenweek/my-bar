@@ -1,6 +1,6 @@
-# my-bar
+# mybar
 
-**my-bar** is a CLI tool that helps you manage your bar.
+**mybar** is a CLI tool that helps you manage your bar.
 
 
 ## Status
@@ -12,13 +12,13 @@ Development.
 
 1. Clone repo:
 
-    `git clone https://github.com/Suenweek/my-bar`
+    `git clone https://github.com/Suenweek/mybar`
 
 2. Install via `pip` (venv recommended):
 
-    `pip install -r requirements.txt`
+    `pip install -e mybar`
 
 
 ## Usage
 
-`python my-bar.py --help`
+`mybar --help`
