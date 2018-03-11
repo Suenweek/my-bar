@@ -1,6 +1,4 @@
-import os
 import pytest
-from tempfile import gettempdir
 from click.testing import CliRunner
 from mybar.db import DataBase
 from mybar.app import App
@@ -10,9 +8,8 @@ from mybar.helpers import get_config
 @pytest.fixture()
 def config():
     config = get_config()
-    config.DATABASE_URL = "sqlite:///{}".format(
-        os.path.join(gettempdir(), config.DATABASE_NAME)
-    )
+    config.DATABASE_URL = "sqlite:///:memory:"
+
     yield config
 
 
@@ -26,7 +23,7 @@ def db(config):
     db.drop_all()
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture()
 def app(config):
     app = App(config=config)
     app.db.create_all()
