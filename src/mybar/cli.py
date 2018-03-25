@@ -28,10 +28,13 @@ def main(ctx, name):
 
 
 @main.command("add")
+@click.argument(
+    "ingredient-names",
+    nargs=-1
+)
 @pass_context
-@click.argument("ingredient-names", nargs=-1)
-def bar_add_ingredient(ctx, ingredient_names):
-    """Add ingredient."""
+def bar_add_ingredients(ctx, ingredient_names):
+    """Add ingredient(s)."""
     for ingredient_name in ingredient_names:
         try:
             ctx.app.bartender.add_ingredient(ctx.bar_name, ingredient_name)
@@ -75,11 +78,14 @@ def list_bar(ctx, limit):
 
 
 @main.command("rm")
+@click.argument(
+    "ingredients-names",
+    nargs=-1
+)
 @pass_context
-@click.argument("ingredient-names", nargs=-1)
-def bar_rm_ingredient(ctx, ingredient_names):
-    """Remove ingredient."""
-    for ingredient_name in ingredient_names:
+def bar_rm_ingredients(ctx, ingredients_names):
+    """Remove ingredient(s)."""
+    for ingredient_name in ingredients_names:
         try:
             ctx.app.bartender.remove_ingredient(ctx.bar_name, ingredient_name)
         except errors.DoesNotExistError:
