@@ -32,6 +32,7 @@ class DataBase(object):
         session = self.Session(bind=self.engine)
         try:
             yield session
+            session.commit()
         except Exception:
             session.rollback()
             raise

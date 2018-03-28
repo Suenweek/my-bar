@@ -7,8 +7,6 @@ def test_create_ingredient(db):
         dark_rum = Ingredient(name="Dark rum")
         session.add(dark_rum)
 
-        session.commit()
-
     with db.session_scope() as session:
         # Check if ingredient was created
         ingredient = session.query(Ingredient).one()
@@ -27,8 +25,6 @@ def test_create_cocktail(db):
             ingredients={vodka, orange_juice}
         )
         session.add(screwdriver)
-
-        session.commit()
 
     with db.session_scope() as session:
         ingredients = session.query(Ingredient)\
@@ -57,8 +53,6 @@ def test_create_bar(db):
         # Create bar
         bar = Bar(name="mybar")
         session.add(bar)
-
-        session.commit()
 
     with db.session_scope() as session:
         # Check if it can be found
@@ -90,8 +84,6 @@ def test_bar_can_make_cocktail(db):
             ingredients={champagne, orange_juice}
         )
         session.add_all({screwdriver, mimosa})
-
-        session.commit()
 
     with db.session_scope() as session:
         bar = session.query(Bar).one()

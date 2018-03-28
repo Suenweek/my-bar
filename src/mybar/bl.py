@@ -13,7 +13,6 @@ class Bartender(BlBase):
     def ensure_bar_exists(self, bar_name):
         with self.app.db.session_scope() as session:
             Bar.get_one_or_create(session, name=bar_name)
-            session.commit()
 
     def add_ingredient(self, bar_name, ingredient_name):
         with self.app.db.session_scope() as session:
@@ -30,12 +29,11 @@ class Bartender(BlBase):
             else:
                 raise errors.AlreadyInBarError
 
-            session.commit()
-
     def list_ingredients(self, bar_name):
         with self.app.db.session_scope() as session:
             bar = Bar.get_one_or_create(session, name=bar_name)
-            return bar.ingredients
+            for ingredient in bar.ingredients:
+                yield ingredient
 
     def remove_ingredient(self, bar_name, ingredient_name):
         with self.app.db.session_scope() as session:
@@ -52,23 +50,22 @@ class Bartender(BlBase):
             else:
                 raise errors.NotInBarError
 
-            session.commit()
-
     def list_wanted_ingredients(self, bar_name, limit=None):
         with self.app.db.session_scope() as session:
             bar = Bar.get_one_or_create(session, name=bar_name)
             all_ingredients = session.query(Ingredient)
             missing_ingredients = set(all_ingredients) - bar.ingredients
-            return sorted(missing_ingredients,
-                          key=lambda i: len(i.cocktails),
-                          reverse=True)[:limit]
+            for ingredient in sorted(missing_ingredients,
+                                     key=lambda i: len(i.cocktails),
+                                     reverse=True)[:limit]:
+                yield ingredient
 
     def list_cocktails(self, bar_name):
         with self.app.db.session_scope() as session:
             bar = Bar.get_one_or_create(session, name=bar_name)
-            return [cocktail for cocktail
-                    in session.query(Cocktail).all()
-                    if bar.can_make(cocktail)]
+            for cocktail in session.query(Cocktail).all():
+                if bar.can_make(cocktail):
+                    yield cocktail
 
 
 class CookBook(BlBase):
@@ -80,7 +77,6 @@ class CookBook(BlBase):
                 for name in self.app.resources["ingredients"]
             ]
             session.add_all(ingredients)
-            session.commit()
 
     def load_iba_cocktails(self):
         with self.app.db.session_scope() as session:
@@ -95,4 +91,3 @@ class CookBook(BlBase):
                 cocktail = Cocktail.get_one_or_create(session, name=name)
                 cocktail.ingredients = ingredients
                 session.add(cocktail)
-            session.commit()

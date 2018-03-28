@@ -26,6 +26,8 @@ def main(ctx, name):
     ctx.app.db.create_all()
     ctx.app.bartender.ensure_bar_exists(ctx.bar_name)
 
+    ctx.fmt = click.HelpFormatter()
+
 
 @main.command("add")
 @click.argument(
@@ -54,27 +56,24 @@ def bar_add_ingredients(ctx, ingredient_names):
 )
 @pass_context
 def list_bar(ctx, limit):
-    """List ingredients, available cocktails and most wanted ingredients."""
-    bar_ingredients = ctx.app.bartender.list_ingredients(ctx.bar_name)
-    if bar_ingredients:
-        click.echo("Bar ingredients:")
-    for ingredient in bar_ingredients:
-        click.secho(ingredient.name, fg="green")
+    """
+    List bar info.
 
-    available_cocktails = ctx.app.bartender.list_cocktails(ctx.bar_name)
-    if available_cocktails:
-        click.echo("Available cocktails:")
-    for cocktail in available_cocktails:
-        click.secho(cocktail.name, fg="green")
+    Includes bar ingredients, available cocktails and most wanted ingredients.
+    """
+    with ctx.fmt.section("Bar ingredients"):
+        for ingredient in ctx.app.bartender.list_ingredients(ctx.bar_name):
+            ctx.fmt.write_text(ingredient.name)
 
-    most_wanted = ctx.app.bartender.list_wanted_ingredients(
-        ctx.bar_name,
-        limit=limit
-    )
-    if most_wanted:
-        click.echo("Most wanted ingredients:")
-    for ingredient in most_wanted:
-        click.secho(ingredient.name, fg="red")
+    with ctx.fmt.section("Available cocktails"):
+        for cocktail in ctx.app.bartender.list_cocktails(ctx.bar_name):
+            ctx.fmt.write_text(cocktail.name)
+
+    with ctx.fmt.section("Most wanted ingredients"):
+        for ingredient in ctx.app.bartender.list_wanted_ingredients(ctx.bar_name, limit=limit):
+            ctx.fmt.write_text(ingredient.name)
+
+    click.echo(ctx.fmt.getvalue())
 
 
 @main.command("rm")

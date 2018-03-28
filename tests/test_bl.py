@@ -17,7 +17,6 @@ class TestBartender(object):
     def test_ensure_existent_bar_exists(self, app):
         with app.db.session_scope() as session:
             session.add(Bar(name="test"))
-            session.commit()
 
         app.bartender.ensure_bar_exists("test")
 
@@ -28,7 +27,6 @@ class TestBartender(object):
         with app.db.session_scope() as session:
             session.add(Bar(name="test"))
             session.add(Ingredient(name="Vodka"))
-            session.commit()
 
         app.bartender.add_ingredient(bar_name="test",
                                      ingredient_name="Vodka")
@@ -43,7 +41,6 @@ class TestBartender(object):
             bar = Bar(name="test")
             bar.ingredients.add(Ingredient(name="Vodka"))
             session.add(bar)
-            session.commit()
 
         with pytest.raises(errors.AlreadyInBarError):
             app.bartender.add_ingredient(bar_name="test",
@@ -57,7 +54,6 @@ class TestBartender(object):
     def test_add_non_existent_ingredient(self, app):
         with app.db.session_scope() as session:
             session.add(Bar(name="test"))
-            session.commit()
 
         with pytest.raises(errors.DoesNotExistError):
             app.bartender.add_ingredient(bar_name="test",
@@ -71,24 +67,24 @@ class TestBartender(object):
         with app.db.session_scope() as session:
             bar = Bar(name="test")
             session.add(bar)
-            session.commit()
 
         bar_ingredients = app.bartender.list_ingredients(bar_name="test")
 
-        assert not bar_ingredients
+        with pytest.raises(StopIteration):
+            next(bar_ingredients)
 
     def test_list_one_ingredient(self, app):
         with app.db.session_scope() as session:
             bar = Bar(name="test")
             bar.ingredients.add(Ingredient(name="Vodka"))
             session.add(bar)
-            session.commit()
 
         bar_ingredients = app.bartender.list_ingredients(bar_name="test")
 
-        assert len(bar_ingredients) == 1
-        vodka = next(iter(bar_ingredients))
+        vodka = next(bar_ingredients)
         assert vodka.name == "Vodka"
+        with pytest.raises(StopIteration):
+            next(bar_ingredients)
 
     def test_remove_existent_present_ingredient(self, app):
         pass
