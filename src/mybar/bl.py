@@ -91,3 +91,13 @@ class CookBook(BlBase):
                 cocktail = Cocktail.get_one_or_create(session, name=name)
                 cocktail.ingredients = ingredients
                 session.add(cocktail)
+
+    def list_ingredients(self):
+        with self.app.db.session_scope() as session:
+            for ingredient in session.query(Ingredient).all():
+                yield ingredient
+
+    def list_cocktails(self):
+        with self.app.db.session_scope() as session:
+            for cocktail in session.query(Cocktail).all():
+                yield cocktail

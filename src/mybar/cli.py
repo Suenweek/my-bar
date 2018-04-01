@@ -55,7 +55,7 @@ def bar_add_ingredients(ctx, ingredient_names):
     show_default=True
 )
 @pass_context
-def list_bar(ctx, limit):
+def bar_list(ctx, limit):
     """
     List bar info.
 
@@ -82,7 +82,7 @@ def list_bar(ctx, limit):
     nargs=-1
 )
 @pass_context
-def bar_rm_ingredients(ctx, ingredients_names):
+def bar_remove_ingredients(ctx, ingredients_names):
     """Remove ingredient(s)."""
     for ingredient_name in ingredients_names:
         try:
@@ -111,4 +111,22 @@ def db_load_iba(ctx):
 def db_reset(ctx):
     """Drop all tables."""
     ctx.app.db.drop_all()
-    ctx.app.db.create_all()
+
+
+@db.command("ls")
+@pass_context
+def db_list(ctx):
+    """
+    List database info.
+
+    Includes database ingredients and cocktails.
+    """
+    with ctx.fmt.section("Ingredients"):
+        for ingredient in ctx.app.cookbook.list_ingredients():
+            ctx.fmt.write_text(ingredient.name)
+
+    with ctx.fmt.section("Cocktails"):
+        for cocktail in ctx.app.cookbook.list_cocktails():
+            ctx.fmt.write_text(cocktail.name)
+
+    click.echo(ctx.fmt.getvalue())
