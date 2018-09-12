@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+tox = "*"
+pytest = "*"
+"e1839a8" = {path = ".", editable = true}
+
+[packages]
+click = "*"
+attrs = "*"
+sqlalchemy = "*"
+appdirs = "*"
+
+[requires]
+python_version = "3.6"
